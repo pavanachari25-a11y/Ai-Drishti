@@ -1,0 +1,29 @@
+workflows:
+  ai-drishti-android:
+    name: AI Drishti Android APK
+    max_build_duration: 60
+    instance_type: linux_x2
+    environment:
+      flutter: stable
+    scripts:
+      - name: Prepare Flutter project
+        script: |
+          set -e
+          unzip -o AI_Drishti_Flutter_Starter.zip -d .
+          flutter create --project-name ai_drishti --platforms=android,ios ai_drishti_build
+          cp ai_drishti_starter/pubspec.yaml ai_drishti_build/pubspec.yaml
+          cp ai_drishti_starter/lib/main.dart ai_drishti_build/lib/main.dart
+      - name: Install Flutter dependencies
+        script: |
+          cd ai_drishti_build
+          flutter pub get
+      - name: Analyze project
+        script: |
+          cd ai_drishti_build
+          flutter analyze
+      - name: Build release APK
+        script: |
+          cd ai_drishti_build
+          flutter build apk --release
+    artifacts:
+      - ai_drishti_build/build/app/outputs/flutter-apk/app-release.apk
